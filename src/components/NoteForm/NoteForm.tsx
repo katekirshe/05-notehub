@@ -19,9 +19,10 @@ const Schema = Yup.object().shape({
 
 interface NoteFormProps {
   onClose: () => void;
+  handleSubmitForm: (values: CreateNote) => void;
 }
 
-function NoteForm({ onClose }: NoteFormProps) {
+function NoteForm({ onClose, handleSubmitForm }: NoteFormProps) {
   const titleFieldId = useId();
   const contentFieldId = useId();
   const tagFieldId = useId();
@@ -35,7 +36,10 @@ function NoteForm({ onClose }: NoteFormProps) {
   return (
     <Formik<CreateNote>
       initialValues={initialValues}
-      onSubmit={() => {}}
+      onSubmit={(values: CreateNote) => {
+        handleSubmitForm(values);
+        onClose();
+      }}
       validationSchema={Schema}
     >
       <Form className={css.form}>

@@ -2,12 +2,14 @@ import { createPortal } from "react-dom";
 import css from "./Modal.module.css";
 import { useEffect } from "react";
 import NoteForm from "../NoteForm/NoteForm";
+import type { CreateNote } from "../../services/noteService";
 
 interface ModalProps {
   onClose: () => void;
+  handleSubmitForm: (values: CreateNote) => void;
 }
 
-function Modal({ onClose }: ModalProps) {
+function Modal({ onClose, handleSubmitForm }: ModalProps) {
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
@@ -38,7 +40,7 @@ function Modal({ onClose }: ModalProps) {
       onClick={handleBackdropClick}
     >
       <div className={css.modal}>
-        <NoteForm onClose={onClose} />
+        <NoteForm onClose={onClose} handleSubmitForm={handleSubmitForm} />
       </div>
     </div>,
     document.body,
