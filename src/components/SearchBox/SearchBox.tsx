@@ -1,4 +1,3 @@
-import { useDebouncedCallback } from "use-debounce";
 import css from "./SearchBox.module.css";
 
 interface SearchBoxProps {
@@ -7,12 +6,7 @@ interface SearchBoxProps {
 }
 
 function SearchBox({ search, setSearch }: SearchBoxProps) {
-  const handleChange = useDebouncedCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(event.target.value);
-    },
-    300,
-  );
+
 
   return (
     <input
@@ -20,7 +14,7 @@ function SearchBox({ search, setSearch }: SearchBoxProps) {
       type="text"
       placeholder="Search notes"
       defaultValue={search}
-      onChange={handleChange}
+      onChange={(e)=>setSearch(e.target.value)}
     />
   );
 }

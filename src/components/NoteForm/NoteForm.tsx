@@ -1,8 +1,9 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import css from "./NoteForm.module.css";
 import { useId } from "react";
-import type { CreateNote } from "../../services/noteService";
+import { createNote, type CreateNote } from "../../services/noteService";
 import * as Yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Schema = Yup.object().shape({
   title: Yup.string()
@@ -19,13 +20,29 @@ const Schema = Yup.object().shape({
 
 interface NoteFormProps {
   onClose: () => void;
-  handleSubmitForm: (values: CreateNote) => void;
 }
 
-function NoteForm({ onClose, handleSubmitForm }: NoteFormProps) {
+function NoteForm({ onClose }: NoteFormProps) {
+  const queryClient = useQueryClient();
   const titleFieldId = useId();
   const contentFieldId = useId();
   const tagFieldId = useId();
+
+
+  const { mutate: createMutate, isSuccess } = useMutation({
+    mutationFn: async (newNote: CreateNote) => {
+      return await createNote(newNote);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["Notes"],
+      });
+    },
+  });
+
+    const handleSubmitForm = (values: CreateNote) => {
+    createMutate(values);
+  };
 
   const initialValues: CreateNote = {
     title: "",
@@ -38,7 +55,9 @@ function NoteForm({ onClose, handleSubmitForm }: NoteFormProps) {
       initialValues={initialValues}
       onSubmit={(values: CreateNote) => {
         handleSubmitForm(values);
-        onClose();
+        if (isSuccess) {
+          onClose()
+        }
       }}
       validationSchema={Schema}
     >
